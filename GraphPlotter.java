@@ -9,16 +9,16 @@ public class GraphPlotter extends JPanel {
     private Color gridLinesColor;
     private Color axesColor;
     private int fontSize;
-    private float[] xPoints;
-    private float[] yPoints;
+    private Number[] xPoints;
+    private Number[] yPoints;
     private Color pointsColor;
     private Color linesColor;
-    private Color pointLabelsColor; // New attribute for point label font color
+    private Color pointLabelsColor;
 
-    // Method to set graph attributes and repaint
-    public void drawGraph(Color backgroundColor, int gridSize, int maxRange, Color gridLinesColor,
-                          Color axesColor, int fontSize, float[] xPoints, float[] yPoints,
-                          Color pointsColor, Color linesColor, Color pointLabelsColor) {
+    // Constructor for float and int data
+    public GraphPlotter(Color backgroundColor, int gridSize, int maxRange, Color gridLinesColor,
+                        Color axesColor, int fontSize, Number[] xPoints, Number[] yPoints,
+                        Color pointsColor, Color linesColor, Color pointLabelsColor) {
         this.backgroundColor = backgroundColor;
         this.gridSize = gridSize;
         this.maxRange = maxRange;
@@ -29,10 +29,7 @@ public class GraphPlotter extends JPanel {
         this.yPoints = yPoints;
         this.pointsColor = pointsColor;
         this.linesColor = linesColor;
-        this.pointLabelsColor = pointLabelsColor; // Set the point labels color
-
-        // Repaint the panel with the new settings
-        repaint();
+        this.pointLabelsColor = pointLabelsColor;
     }
 
     @Override
@@ -73,47 +70,49 @@ public class GraphPlotter extends JPanel {
 
         // Draw lines connecting the points
         g2.setColor(linesColor);
-        for (int i = 0; i < xPoints.length; i++) {
-            int x1 = getWidth() / 2 + Math.round(xPoints[i] * gridSize);
-            int y1 = getHeight() / 2 - Math.round(yPoints[i] * gridSize);
-            int x2 = getWidth() / 2 + Math.round(xPoints[(i + 1) % xPoints.length] * gridSize);
-            int y2 = getHeight() / 2 - Math.round(yPoints[(i + 1) % yPoints.length] * gridSize);
-            g2.drawLine(x1, y1, x2, y2);
-        }
+        drawLines(g2);
 
         // Draw and label each point
         g2.setColor(pointsColor);
-        for (int i = 0; i < xPoints.length; i++) {
-            int x = getWidth() / 2 + Math.round(xPoints[i] * gridSize);
-            int y = getHeight() / 2 - Math.round(yPoints[i] * gridSize);
-            g2.fillOval(x - 3, y - 3, 6, 6);
+        drawPoints(g2);
+    }
 
-            // Set the color for the point labels
+    private void drawLines(Graphics2D g2) {
+        for (int i = 0; i < xPoints.length; i++) {
+            int x1 = getWidth() / 2 + convertToPixel(xPoints[i]);
+            int y1 = getHeight() / 2 - convertToPixel(yPoints[i]);
+            int x2 = getWidth() / 2 + convertToPixel(xPoints[(i + 1) % xPoints.length]);
+            int y2 = getHeight() / 2 - convertToPixel(yPoints[(i + 1) % yPoints.length]);
+            g2.drawLine(x1, y1, x2, y2);
+        }
+    }
+
+    private void drawPoints(Graphics2D g2) {
+        for (int i = 0; i < xPoints.length; i++) {
+            int x = getWidth() / 2 + convertToPixel(xPoints[i]);
+            int y = getHeight() / 2 - convertToPixel(yPoints[i]);
+            g2.fillOval(x - 3, y - 3, 6, 6);
             g2.setColor(pointLabelsColor);
             g2.drawString("(" + xPoints[i] + "," + yPoints[i] + ")", x + 5, y - 5);
-
-            // Reset color to pointsColor for drawing points
             g2.setColor(pointsColor);
         }
     }
 
-    public static void graph_calling(float[] xPoints, float[] yPoints) {
+    private int convertToPixel(Number value) {
+        return (int) (value.doubleValue() * gridSize);
+    }
+
+    // Static method to create a frame with a GraphPlotter
+    public static void graphUserDefine(Color backgroundColor, int gridSize, int maxRange, Color gridLinesColor,
+                                       Color axesColor, int fontSize, Number[] xPoints, Number[] yPoints,
+                                       Color pointsColor, Color linesColor, Color pointLabelsColor) {
         JFrame frame = new JFrame("Graph Plotter");
-        GraphPlotter panel = new GraphPlotter();
+        GraphPlotter panel = new GraphPlotter(backgroundColor, gridSize, maxRange, gridLinesColor, axesColor, fontSize,
+                xPoints, yPoints, pointsColor, linesColor, pointLabelsColor);
         frame.add(panel);
         frame.setSize(500, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        
-        // Example settings with point label font color
-        panel.drawGraph(Color.WHITE, 30, 15, Color.LIGHT_GRAY, Color.BLACK, 15,
-                        xPoints, yPoints, Color.GREEN, Color.RED, Color.BLUE);
-    }
-
-    public static void main(String[] args) {
-        float[] xarr = {-3.0f, -2.0f, -1.0f, 1.0f, 2.0f, 3.0f};
-        float[] yarr = {-2.0f, -1.0f, 0.0f, 2.0f, 3.0f, 4.0f};
-
-        graph_calling(xarr, yarr);
     }
 }
+
