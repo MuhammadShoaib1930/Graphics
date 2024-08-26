@@ -9,16 +9,16 @@ public class GraphPlotter extends JPanel {
     private Color gridLinesColor;
     private Color axesColor;
     private int fontSize;
-    private Number[] xPoints;
-    private Number[] yPoints;
+    private int[] xPoints;
+    private int[] yPoints;
     private Color pointsColor;
     private Color linesColor;
     private Color pointLabelsColor;
 
-    // Constructor for float and int data
+    // Constructor for integer data
     public GraphPlotter(Color backgroundColor, int gridSize, int maxRange, Color gridLinesColor,
-                        Color axesColor, int fontSize, Number[] xPoints, Number[] yPoints,
-                        Color pointsColor, Color linesColor, Color pointLabelsColor) {
+            Color axesColor, int fontSize, int[] xPoints, int[] yPoints,
+            Color pointsColor, Color linesColor, Color pointLabelsColor) {
         this.backgroundColor = backgroundColor;
         this.gridSize = gridSize;
         this.maxRange = maxRange;
@@ -46,7 +46,7 @@ public class GraphPlotter extends JPanel {
             int x = getWidth() / 2 + i * gridSize;
             int y = getHeight() / 2 - i * gridSize;
             g2.drawLine(x, 0, x, getHeight()); // vertical lines
-            g2.drawLine(0, y, getWidth(), y);  // horizontal lines
+            g2.drawLine(0, y, getWidth(), y); // horizontal lines
         }
 
         // Draw the x and y axes
@@ -61,7 +61,7 @@ public class GraphPlotter extends JPanel {
                 int x = getWidth() / 2 + i * gridSize;
                 int y = getHeight() / 2 - i * gridSize;
                 g2.drawString(String.valueOf(i), x - 5, getHeight() / 2 + 15); // x-axis labels
-                g2.drawString(String.valueOf(i), getWidth() / 2 - 25, y + 5);  // y-axis labels
+                g2.drawString(String.valueOf(i), getWidth() / 2 - 25, y + 5); // y-axis labels
             }
         }
 
@@ -98,14 +98,14 @@ public class GraphPlotter extends JPanel {
         }
     }
 
-    private int convertToPixel(Number value) {
-        return (int) (value.doubleValue() * gridSize);
+    private int convertToPixel(int value) {
+        return value * gridSize;
     }
 
     // Static method to create a frame with a GraphPlotter
     public static void graphUserDefine(Color backgroundColor, int gridSize, int maxRange, Color gridLinesColor,
-                                       Color axesColor, int fontSize, Number[] xPoints, Number[] yPoints,
-                                       Color pointsColor, Color linesColor, Color pointLabelsColor) {
+            Color axesColor, int fontSize, int[] xPoints, int[] yPoints,
+            Color pointsColor, Color linesColor, Color pointLabelsColor) {
         JFrame frame = new JFrame("Graph Plotter");
         GraphPlotter panel = new GraphPlotter(backgroundColor, gridSize, maxRange, gridLinesColor, axesColor, fontSize,
                 xPoints, yPoints, pointsColor, linesColor, pointLabelsColor);
@@ -115,4 +115,3 @@ public class GraphPlotter extends JPanel {
         frame.setVisible(true);
     }
 }
-
